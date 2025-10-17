@@ -28,8 +28,10 @@ class GeminiClient:
             available_models = [model.name for model in models]
             
             # Uygun bir model bul
-            if 'models/gemini-1.5-flash-001' in available_models:
-                model_name = 'gemini-1.5-flash-001'
+            if 'models/gemini-2.5-flash' in available_models:
+                model_name = 'gemini-2.5-flash'
+            elif 'models/gemini-2.0-flash' in available_models:
+                model_name = 'gemini-2.0-flash'
             elif 'models/gemini-1.5-flash' in available_models:
                 model_name = 'gemini-1.5-flash'
             elif 'models/gemini-pro' in available_models:

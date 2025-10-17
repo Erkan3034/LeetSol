@@ -40,7 +40,11 @@ class LeetCodeClient:
                 cookies=self.session_cookies,
                 timeout=30
             )
-            response.raise_for_status()
+            
+            # Detaylı hata bilgisi
+            if response.status_code != 200:
+                error_text = response.text
+                raise Exception(f"HTTP {response.status_code}: {error_text}")
             
             data = response.json()
             if 'errors' in data:
@@ -69,7 +73,6 @@ class LeetCodeClient:
                 hasNotes
                 notes
                 flagType
-                tags
             }
         }
         """
@@ -254,21 +257,7 @@ class LeetCodeClient:
         query globalData {
             userStatus {
                 isSignedIn
-                isPremium
                 username
-                realName
-                avatar
-                userSlug
-                isAdmin
-                isSuperuser
-                isTranslator
-                isModerator
-                isVerified
-                checkedInToday
-                useTranslation
-                premiumExpiredAt
-                isPhoneVerified
-                isSocialUnlocked
             }
         }
         """
