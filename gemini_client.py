@@ -10,7 +10,7 @@ class GeminiClient:
         genai.configure(api_key=api_key)
         
         # Model ayarları
-        self.model = genai.GenerativeModel('gemini-pro')
+        self.model = genai.GenerativeModel('gemini-1.5-flash-001')
         
         # Generation config
         self.generation_config = {
@@ -23,6 +23,24 @@ class GeminiClient:
     def test_connection(self) -> bool:
         """Gemini API bağlantısını test et"""
         try:
+            # Önce mevcut modelleri listele
+            models = genai.list_models()
+            available_models = [model.name for model in models]
+            
+            # Uygun bir model bul
+            if 'models/gemini-1.5-flash-001' in available_models:
+                model_name = 'gemini-1.5-flash-001'
+            elif 'models/gemini-1.5-flash' in available_models:
+                model_name = 'gemini-1.5-flash'
+            elif 'models/gemini-pro' in available_models:
+                model_name = 'gemini-pro'
+            else:
+                print(f"Mevcut modeller: {available_models}")
+                return False
+            
+            # Modeli güncelle
+            self.model = genai.GenerativeModel(model_name)
+            
             # Basit bir test prompt'u gönder
             test_prompt = "Hello, can you respond with 'Connection successful'?"
             response = self.model.generate_content(test_prompt)

@@ -288,11 +288,27 @@ class LeetCodeClient:
     def test_connection(self) -> bool:
         """Bağlantıyı test et"""
         try:
-            username = self.get_username()
-            if username:
+            # Basit bir GraphQL sorgusu ile test et
+            query = """
+            query globalData {
+                userStatus {
+                    isSignedIn
+                    username
+                }
+            }
+            """
+            
+            data = self._make_request(query)
+            user_status = data.get('userStatus', {})
+            
+            if user_status.get('isSignedIn'):
                 return True
-            return False
-        except:
+            else:
+                print("LeetCode: Kullanıcı giriş yapmamış")
+                return False
+                
+        except Exception as e:
+            print(f"LeetCode test hatası: {str(e)}")
             return False
     
     def get_user_stats(self) -> Dict:

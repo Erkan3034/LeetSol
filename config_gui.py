@@ -268,6 +268,26 @@ class ConfigWindow(QMainWindow):
     def save_settings(self):
         """Ayarları .env dosyasına kaydet"""
         try:
+            # Boş alanları kontrol et
+            if not self.github_token.text().strip():
+                QMessageBox.warning(self, "Uyarı", "GitHub Token boş olamaz!")
+                return
+            if not self.github_username.text().strip():
+                QMessageBox.warning(self, "Uyarı", "GitHub kullanıcı adı boş olamaz!")
+                return
+            if not self.github_repo.text().strip():
+                QMessageBox.warning(self, "Uyarı", "GitHub repository adı boş olamaz!")
+                return
+            if not self.leetcode_session.text().strip():
+                QMessageBox.warning(self, "Uyarı", "LeetCode Session boş olamaz!")
+                return
+            if not self.csrf_token.text().strip():
+                QMessageBox.warning(self, "Uyarı", "CSRF Token boş olamaz!")
+                return
+            if not self.gemini_api_key.text().strip():
+                QMessageBox.warning(self, "Uyarı", "Gemini API Key boş olamaz!")
+                return
+            
             # Şifreleme anahtarı oluştur veya yükle
             key_file = 'encryption.key'
             if os.path.exists(key_file):
@@ -280,18 +300,24 @@ class ConfigWindow(QMainWindow):
             
             fernet = Fernet(key)
             
+            # Şifreleme işlemlerini yap
+            encrypted_github_token = fernet.encrypt(self.github_token.text().strip().encode()).decode()
+            encrypted_leetcode_session = fernet.encrypt(self.leetcode_session.text().strip().encode()).decode()
+            encrypted_csrf_token = fernet.encrypt(self.csrf_token.text().strip().encode()).decode()
+            encrypted_gemini_key = fernet.encrypt(self.gemini_api_key.text().strip().encode()).decode()
+            
             # .env dosyasına yazılacak içerik
             env_content = f"""# GitHub Ayarları
-GITHUB_TOKEN={fernet.encrypt(self.github_token.text().encode()).decode()}
-GITHUB_USERNAME={self.github_username.text()}
-GITHUB_REPO={self.github_repo.text()}
+GITHUB_TOKEN={encrypted_github_token}
+GITHUB_USERNAME={self.github_username.text().strip()}
+GITHUB_REPO={self.github_repo.text().strip()}
 
 # LeetCode Ayarları
-LEETCODE_SESSION={fernet.encrypt(self.leetcode_session.text().encode()).decode()}
-CSRF_TOKEN={fernet.encrypt(self.csrf_token.text().encode()).decode()}
+LEETCODE_SESSION={encrypted_leetcode_session}
+CSRF_TOKEN={encrypted_csrf_token}
 
 # Gemini API Ayarları
-GEMINI_API_KEY={fernet.encrypt(self.gemini_api_key.text().encode()).decode()}
+GEMINI_API_KEY={encrypted_gemini_key}
 
 # Senkronizasyon Ayarları
 SYNC_INTERVAL={self.sync_interval.currentText()}
@@ -307,14 +333,100 @@ NOTIFICATIONS={str(self.notifications.isChecked()).lower()}
             
         except Exception as e:
             QMessageBox.critical(self, "Hata", f"Ayarlar kaydedilirken hata oluştu: {str(e)}")
+            print(f"Detaylı hata: {e}")  # Debug için
             
     def test_connections(self):
         """Bağlantıları test et"""
-        QMessageBox.information(self, "Test", "Bağlantı testleri henüz implement edilmedi. Bu özellik yakında eklenecek.")
+        try:
+            # Boş alanları kontrol et
+            if not self.github_token.text().strip():
+                QMessageBox.warning(self, "Uyarı", "GitHub Token boş!")
+                return
+            if not self.github_username.text().strip():
+                QMessageBox.warning(self, "Uyarı", "GitHub kullanıcı adı boş!")
+                return
+            if not self.github_repo.text().strip():
+                QMessageBox.warning(self, "Uyarı", "GitHub repository adı boş!")
+                return
+            if not self.leetcode_session.text().strip():
+                QMessageBox.warning(self, "Uyarı", "LeetCode Session boş!")
+                return
+            if not self.csrf_token.text().strip():
+                QMessageBox.warning(self, "Uyarı", "CSRF Token boş!")
+                return
+            if not self.gemini_api_key.text().strip():
+                QMessageBox.warning(self, "Uyarı", "Gemini API Key boş!")
+                return
+            
+            # Geçici olarak API istemcilerini oluştur ve test et
+            from leetcode_client import LeetCodeClient
+            from github_client import GitHubClient
+            from gemini_client import GeminiClient
+            
+            results = []
+            
+            # GitHub test
+            try:
+                github_client = GitHubClient(
+                    token=self.github_token.text().strip(),
+                    username=self.github_username.text().strip(),
+                    repo=self.github_repo.text().strip()
+                )
+                github_ok = github_client.test_connection()
+                results.append(f"GitHub: {'✅ Başarılı' if github_ok else '❌ Başarısız'}")
+            except Exception as e:
+                results.append(f"GitHub: ❌ Başarısız - {str(e)[:50]}...")
+            
+            # LeetCode test
+            try:
+                leetcode_client = LeetCodeClient(
+                    session=self.leetcode_session.text().strip(),
+                    csrf_token=self.csrf_token.text().strip()
+                )
+                leetcode_ok = leetcode_client.test_connection()
+                results.append(f"LeetCode: {'✅ Başarılı' if leetcode_ok else '❌ Başarısız'}")
+            except Exception as e:
+                results.append(f"LeetCode: ❌ Başarısız - {str(e)[:50]}...")
+            
+            # Gemini test
+            try:
+                gemini_client = GeminiClient(api_key=self.gemini_api_key.text().strip())
+                gemini_ok = gemini_client.test_connection()
+                results.append(f"Gemini: {'✅ Başarılı' if gemini_ok else '❌ Başarısız'}")
+            except Exception as e:
+                results.append(f"Gemini: ❌ Başarısız - {str(e)[:50]}...")
+            
+            # Sonuçları göster
+            result_message = "\n".join(results)
+            QMessageBox.information(self, "Test Sonuçları", result_message)
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Hata", f"Test sırasında hata oluştu: {str(e)}")
         
     def start_sync(self):
         """Senkronizasyonu başlat"""
-        QMessageBox.information(self, "Senkronizasyon", "Senkronizasyon özelliği henüz implement edilmedi. Bu özellik yakında eklenecek.")
+        try:
+            # Ana pencereyi kapat ve senkronizasyonu başlat
+            self.close()
+            
+            # Ana uygulamayı başlat
+            from main import MainWindow
+            from PyQt5.QtWidgets import QApplication
+            import sys
+            
+            app = QApplication.instance()
+            if app is None:
+                app = QApplication(sys.argv)
+            
+            main_window = MainWindow()
+            main_window.show()
+            
+            # Senkronizasyonu başlat
+            if main_window.sync_manager:
+                main_window.sync_manager.start_sync()
+            
+        except Exception as e:
+            QMessageBox.critical(self, "Hata", f"Senkronizasyon başlatılamadı: {str(e)}")
 
 def main():
     app = QApplication(sys.argv)

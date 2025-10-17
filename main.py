@@ -17,11 +17,17 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Universal LeetCode GitHub Sync Tool")
         self.setGeometry(200, 200, 900, 700)
         
-        # Sync manager'ı başlat
-        self.sync_manager = SyncManager()
-        self.sync_manager.status_changed.connect(self.update_status)
-        self.sync_manager.new_solution_found.connect(self.show_new_solution_notification)
-        self.sync_manager.error_occurred.connect(self.show_error)
+        # Sync manager'ı başlat (hata durumunda None olacak)
+        self.sync_manager = None
+        try:
+            self.sync_manager = SyncManager()
+            self.sync_manager.status_changed.connect(self.update_status)
+            self.sync_manager.new_solution_found.connect(self.show_new_solution_notification)
+            self.sync_manager.error_occurred.connect(self.show_error)
+        except FileNotFoundError:
+            # Ayarlar henüz yapılmamış, ayarlar penceresini aç
+            self.log_message("Ayarlar henüz yapılmamış. Lütfen önce ayarları yapılandırın.")
+            self.open_settings()
         
         # Ana widget ve layout
         central_widget = QWidget()
@@ -244,7 +250,7 @@ class MainWindow(QMainWindow):
     def check_auto_start(self):
         """Otomatik başlatma kontrolü"""
         try:
-            if self.sync_manager.auto_start:
+            if self.sync_manager and self.sync_manager.auto_start:
                 self.log_message("Otomatik senkronizasyon başlatılıyor...")
                 self.start_sync()
         except Exception as e:
@@ -302,6 +308,11 @@ class MainWindow(QMainWindow):
     
     def toggle_sync(self):
         """Senkronizasyonu başlat/durdur"""
+        if not self.sync_manager:
+            self.log_message("Önce ayarları yapılandırın!")
+            self.open_settings()
+            return
+            
         status = self.sync_manager.get_status()
         
         if status['is_running']:
@@ -325,6 +336,11 @@ class MainWindow(QMainWindow):
     
     def start_sync(self):
         """Senkronizasyonu başlat"""
+        if not self.sync_manager:
+            self.log_message("Önce ayarları yapılandırın!")
+            self.open_settings()
+            return
+            
         try:
             success = self.sync_manager.start_sync()
             if success:
@@ -350,6 +366,11 @@ class MainWindow(QMainWindow):
     
     def manual_sync(self):
         """Manuel senkronizasyon çalıştır"""
+        if not self.sync_manager:
+            self.log_message("Önce ayarları yapılandırın!")
+            self.open_settings()
+            return
+            
         try:
             self.log_message("Manuel senkronizasyon başlatılıyor...")
             self.progress_bar.setVisible(True)
@@ -367,6 +388,11 @@ class MainWindow(QMainWindow):
     
     def test_connections(self):
         """Bağlantıları test et"""
+        if not self.sync_manager:
+            self.log_message("Önce ayarları yapılandırın!")
+            self.open_settings()
+            return
+            
         try:
             self.log_message("Bağlantılar test ediliyor...")
             
@@ -414,11 +440,14 @@ class MainWindow(QMainWindow):
         timestamp = datetime.now().strftime("%H:%M:%S")
         formatted_message = f"[{timestamp}] {message}"
         
-        self.log_text.append(formatted_message)
-        
-        # Scroll to bottom
-        scrollbar = self.log_text.verticalScrollBar()
-        scrollbar.setValue(scrollbar.maximum())
+        # log_text henüz oluşturulmamışsa sadece print et
+        if hasattr(self, 'log_text'):
+            self.log_text.append(formatted_message)
+            # Scroll to bottom
+            scrollbar = self.log_text.verticalScrollBar()
+            scrollbar.setValue(scrollbar.maximum())
+        else:
+            print(formatted_message)
     
     def update_time(self):
         """Saati güncelle"""
@@ -446,7 +475,7 @@ class MainWindow(QMainWindow):
             event.ignore()
         else:
             # Senkronizasyonu durdur
-            if hasattr(self, 'sync_manager'):
+            if hasattr(self, 'sync_manager') and self.sync_manager:
                 self.sync_manager.stop_sync()
             event.accept()
 
