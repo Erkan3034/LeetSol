@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+venv/
+
+# Editors/OS
+.vscode/
+.idea/
+.DS_Store
+
+# Python cache/build
+build/
+dist/
+*.egg-info/
+
+# Local data
+solutions/**/__pycache__/
+
+# Sensitive data - NEVER commit these
+.env
+.env.local
+.env.*.local
+config.json
+secrets.json
+*.key
+*.pem
+*.p12
+
+# LeetCode session data
+leetcode_session.txt
+lc_cookies.json
+
+# GitHub tokens
+github_token.txt
