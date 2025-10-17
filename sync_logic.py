@@ -200,7 +200,7 @@ class SyncManager(QObject):
             last_id = self.local_data.get('last_submission_id', 0)
             
             for submission in submissions:
-                submission_id = submission.get('id', 0)
+                submission_id = int(submission.get('id', 0))
                 
                 # Sadece yeni gönderimleri işle
                 if submission_id > last_id and submission_id not in self.local_data.get('processed_submissions', []):
@@ -223,7 +223,7 @@ class SyncManager(QObject):
     def process_new_submission(self, submission_data):
         """Yeni gönderimi işle"""
         try:
-            submission_id = submission_data.get('id')
+            submission_id = int(submission_data.get('id', 0))
             problem_slug = submission_data.get('titleSlug')
             problem_title = submission_data.get('title')
             language = submission_data.get('lang')

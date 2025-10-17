@@ -338,27 +338,40 @@ NOTIFICATIONS={str(self.notifications.isChecked()).lower()}
     def test_connections(self):
         """Bağlantıları test et"""
         try:
-            # Boş alanları kontrol et
-            if not self.github_token.text().strip():
-                QMessageBox.warning(self, "Uyarı", "GitHub Token boş!")
-                return
-            if not self.github_username.text().strip():
-                QMessageBox.warning(self, "Uyarı", "GitHub kullanıcı adı boş!")
-                return
-            if not self.github_repo.text().strip():
-                QMessageBox.warning(self, "Uyarı", "GitHub repository adı boş!")
-                return
-            if not self.leetcode_session.text().strip():
-                QMessageBox.warning(self, "Uyarı", "LeetCode Session boş!")
-                return
-            if not self.csrf_token.text().strip():
-                QMessageBox.warning(self, "Uyarı", "CSRF Token boş!")
-                return
-            if not self.gemini_api_key.text().strip():
-                QMessageBox.warning(self, "Uyarı", "Gemini API Key boş!")
+            # Önce .env dosyasından şifrelenmiş verileri oku
+            if not os.path.exists('.env'):
+                QMessageBox.warning(self, "Uyarı", ".env dosyası bulunamadı!")
                 return
             
-            # Geçici olarak API istemcilerini oluştur ve test et
+            # Şifreleme anahtarı yükle
+            key_file = 'encryption.key'
+            if not os.path.exists(key_file):
+                QMessageBox.warning(self, "Uyarı", "Şifreleme anahtarı bulunamadı!")
+                return
+            
+            with open(key_file, 'rb') as f:
+                key = f.read()
+            
+            fernet = Fernet(key)
+            
+            # .env dosyasından şifrelenmiş verileri oku ve çöz
+            from dotenv import load_dotenv
+            load_dotenv()
+            
+            try:
+                github_token = fernet.decrypt(os.getenv('GITHUB_TOKEN').encode()).decode()
+                github_username = os.getenv('GITHUB_USERNAME')
+                github_repo = os.getenv('GITHUB_REPO')
+                
+                leetcode_session = fernet.decrypt(os.getenv('LEETCODE_SESSION').encode()).decode()
+                csrf_token = fernet.decrypt(os.getenv('CSRF_TOKEN').encode()).decode()
+                
+                gemini_api_key = fernet.decrypt(os.getenv('GEMINI_API_KEY').encode()).decode()
+            except Exception as e:
+                QMessageBox.critical(self, "Hata", f"Şifrelenmiş veriler okunamadı: {str(e)}")
+                return
+            
+            # API istemcilerini oluştur ve test et
             from leetcode_client import LeetCodeClient
             from github_client import GitHubClient
             from gemini_client import GeminiClient
@@ -368,9 +381,9 @@ NOTIFICATIONS={str(self.notifications.isChecked()).lower()}
             # GitHub test
             try:
                 github_client = GitHubClient(
-                    token=self.github_token.text().strip(),
-                    username=self.github_username.text().strip(),
-                    repo=self.github_repo.text().strip()
+                    token=github_token,
+                    username=github_username,
+                    repo=github_repo
                 )
                 github_ok = github_client.test_connection()
                 results.append(f"GitHub: {'✅ Başarılı' if github_ok else '❌ Başarısız'}")
@@ -380,8 +393,8 @@ NOTIFICATIONS={str(self.notifications.isChecked()).lower()}
             # LeetCode test
             try:
                 leetcode_client = LeetCodeClient(
-                    session=self.leetcode_session.text().strip(),
-                    csrf_token=self.csrf_token.text().strip()
+                    session=leetcode_session,
+                    csrf_token=csrf_token
                 )
                 leetcode_ok = leetcode_client.test_connection()
                 results.append(f"LeetCode: {'✅ Başarılı' if leetcode_ok else '❌ Başarısız'}")
@@ -390,7 +403,7 @@ NOTIFICATIONS={str(self.notifications.isChecked()).lower()}
             
             # Gemini test
             try:
-                gemini_client = GeminiClient(api_key=self.gemini_api_key.text().strip())
+                gemini_client = GeminiClient(api_key=gemini_api_key)
                 gemini_ok = gemini_client.test_connection()
                 results.append(f"Gemini: {'✅ Başarılı' if gemini_ok else '❌ Başarısız'}")
             except Exception as e:
