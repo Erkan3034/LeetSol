@@ -40,21 +40,27 @@ def build_exe():
         '--onefile',                    # Tek dosya olarak paketle
         '--windowed',                   # GUI uygulaması (konsol penceresi gösterme)
         '--name=LeetCodeSyncTool',      # EXE dosya adı
-        '--icon=icon.ico',              # İkon dosyası (varsa)
         '--add-data=env_template.txt;.', # Template dosyasını dahil et
         '--hidden-import=PyQt5.QtCore',
         '--hidden-import=PyQt5.QtGui', 
         '--hidden-import=PyQt5.QtWidgets',
+        '--hidden-import=PyQt5.QtNetwork',
         '--hidden-import=requests',
         '--hidden-import=google.generativeai',
-        '--hidden-import=cryptography',
+        '--hidden-import=cryptography.fernet',
         '--hidden-import=dotenv',
+        '--hidden-import=json',
+        '--hidden-import=base64',
+        '--hidden-import=os',
+        '--hidden-import=sys',
+        '--hidden-import=time',
+        '--hidden-import=datetime',
+        '--hidden-import=re',
+        '--hidden-import=shutil',
+        '--hidden-import=pathlib',
+        '--clean',                      # Önceki build dosyalarını temizle
         'main.py'
     ]
-    
-    # İkon dosyası yoksa kaldır
-    if not os.path.exists('icon.ico'):
-        pyinstaller_cmd.remove('--icon=icon.ico')
     
     print("🔨 PyInstaller ile EXE oluşturuluyor...")
     print(f"Komut: {' '.join(pyinstaller_cmd)}")

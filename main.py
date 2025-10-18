@@ -292,6 +292,31 @@ class MainWindow(QMainWindow):
         """Hata mesajını göster"""
         self.log_message(f"❌ HATA: {error_message}")
         
+        # Kullanıcı dostu hata mesajları
+        if "Cookie'lerin süresi dolmuş" in error_message or "Kullanıcı giriş yapmamış" in error_message:
+            QMessageBox.warning(
+                self, 
+                "LeetCode Cookie Sorunu", 
+                "LeetCode cookie'lerinizin süresi dolmuş olabilir.\n\n"
+                "Çözüm:\n"
+                "1. LeetCode'a giriş yapın\n"
+                "2. F12 → Application → Cookies → https://leetcode.com\n"
+                "3. Yeni LEETCODE_SESSION ve csrftoken değerlerini kopyalayın\n"
+                "4. Ayarlar → LeetCode sekmesinde güncelleyin"
+            )
+        elif "API key not valid" in error_message:
+            QMessageBox.warning(
+                self,
+                "API Anahtarı Sorunu",
+                "API anahtarlarınızdan biri geçersiz.\n\n"
+                "Çözüm:\n"
+                "1. GitHub: Settings → Developer settings → Personal access tokens\n"
+                "2. Gemini: Google AI Studio'dan yeni API key alın\n"
+                "3. Ayarlar sekmesinde güncelleyin"
+            )
+        else:
+            QMessageBox.critical(self, "Hata", f"Bir hata oluştu:\n\n{error_message}")
+        
         # System tray bildirimi
         if hasattr(self, 'tray_icon'):
             self.tray_icon.showMessage(

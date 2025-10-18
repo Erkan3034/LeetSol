@@ -291,6 +291,11 @@ class ConfigWindow(QMainWindow):
                 QMessageBox.warning(self, "Uyarı", "Gemini API Key boş olamaz!")
                 return
             
+            # Eski .env dosyasını yedekle (varsa)
+            if os.path.exists('.env'):
+                import shutil
+                shutil.copy('.env', '.env.backup')
+            
             # Şifreleme anahtarı oluştur veya yükle
             key_file = 'encryption.key'
             if os.path.exists(key_file):
@@ -300,15 +305,15 @@ class ConfigWindow(QMainWindow):
                 key = Fernet.generate_key()
                 with open(key_file, 'wb') as f:
                     f.write(key)
-            
+
             fernet = Fernet(key)
-            
+
             # Şifreleme işlemlerini yap
             encrypted_github_token = fernet.encrypt(self.github_token.text().strip().encode()).decode()
             encrypted_leetcode_session = fernet.encrypt(self.leetcode_session.text().strip().encode()).decode()
             encrypted_csrf_token = fernet.encrypt(self.csrf_token.text().strip().encode()).decode()
             encrypted_gemini_key = fernet.encrypt(self.gemini_api_key.text().strip().encode()).decode()
-            
+
             # .env dosyasına yazılacak içerik
             env_content = f"""# GitHub Ayarları
 GITHUB_TOKEN={encrypted_github_token}
@@ -332,13 +337,19 @@ NOTIFICATIONS={str(self.notifications.isChecked()).lower()}
                 f.write(env_content)
             
             self.status_label.setText("Durum: Ayarlar başarıyla kaydedildi")
-            QMessageBox.information(self, "Başarılı", "Ayarlar başarıyla kaydedildi!")
+            QMessageBox.information(self, "Başarılı", "Ayarlar başarıyla kaydedildi!\n\nEski ayarlar .env.backup dosyasında yedeklendi.")
             
             # Ana pencereye ayarların kaydedildiğini bildir
             self.settings_saved.emit()
             
         except Exception as e:
-            QMessageBox.critical(self, "Hata", f"Ayarlar kaydedilirken hata oluştu: {str(e)}")
+            # Hata durumunda yedekten geri yükle
+            if os.path.exists('.env.backup'):
+                import shutil
+                shutil.copy('.env.backup', '.env')
+                QMessageBox.warning(self, "Uyarı", f"Ayarlar kaydedilirken hata oluştu. Eski ayarlar geri yüklendi.\n\nHata: {str(e)}")
+            else:
+                QMessageBox.critical(self, "Hata", f"Ayarlar kaydedilirken hata oluştu: {str(e)}")
             print(f"Detaylı hata: {e}")  # Debug için
             
     def test_connections(self):

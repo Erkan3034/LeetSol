@@ -305,11 +305,15 @@ class LeetCodeClient:
             if user_status.get('isSignedIn'):
                 return True
             else:
-                print("LeetCode: Kullanıcı giriş yapmamış")
+                print("LeetCode: Kullanıcı giriş yapmamış - Cookie'lerin süresi dolmuş olabilir")
                 return False
                 
         except Exception as e:
-            print(f"LeetCode test hatası: {str(e)}")
+            error_msg = str(e)
+            if "Kullanıcı giriş yapmamış" in error_msg or "isSignedIn" in error_msg:
+                print("LeetCode: Cookie'lerin süresi dolmuş olabilir. Lütfen yeni cookie'leri alın.")
+            else:
+                print(f"LeetCode test hatası: {error_msg}")
             return False
     
     def get_user_stats(self) -> Dict:
