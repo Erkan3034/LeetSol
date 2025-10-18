@@ -249,6 +249,11 @@ Sorunları [GitHub Issues](https://github.com/Erkan3034/LeetSol/issues) üzerind
 ### 💡 **Feature Request**
 Yeni özellik önerilerinizi [Discussions](https://github.com/Erkan3034/LeetSol/discussions) bölümünde paylaşın.
 
+### 👨‍💻 **Geliştirici İletişim**
+- **LinkedIn**: [Erkan TURGUT](https://www.linkedin.com/in/erkanturgut1205/)
+- **Portfolio**: [erkanturgut.netlify.app](https://erkanturgut.netlify.app/)
+- **GitHub**: [@Erkan3034](https://github.com/Erkan3034)
+
 ## 📄 Lisans
 
 Bu proje [MIT lisansı](LICENSE) altında lisanslanmıştır.
@@ -263,6 +268,8 @@ Bu proje size yardımcı olduysa, lütfen bir ⭐ verin!
 - 💬 **Discussions**: GitHub Discussions
 - 🐛 **Bug Reports**: GitHub Issues
 - 📖 **Dokümantasyon**: [KULLANIM_KILAVUZU.md](KULLANIM_KILAVUZU.md)
+- 👨‍💻 **Geliştirici**: [Erkan TURGUT](https://www.linkedin.com/in/erkanturgut1205/)
+- 🌐 **Portfolio**: [erkanturgut.netlify.app](https://erkanturgut.netlify.app/)
 
 ---
 
@@ -270,6 +277,10 @@ Bu proje size yardımcı olduysa, lütfen bir ⭐ verin!
 
 **⭐ Bu projeyi beğendiyseniz yıldız verin! ⭐**
 
-Made with ❤️ by [Erkan3034](https://github.com/Erkan3034)
+Made with ❤️ by **Erkan TURGUT**
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Erkan%20TURGUT-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/erkanturgut1205/)
+[![Portfolio](https://img.shields.io/badge/Portfolio-erkanturgut.netlify.app-green?style=flat&logo=netlify)](https://erkanturgut.netlify.app/)
+[![GitHub](https://img.shields.io/badge/GitHub-Erkan3034-black?style=flat&logo=github)](https://github.com/Erkan3034)
 
 </div>

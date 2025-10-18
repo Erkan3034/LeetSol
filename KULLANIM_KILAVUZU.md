@@ -175,4 +175,14 @@ Uygulama otomatik güncellenmez. Yeni sürümler için GitHub repository'sini ko
 
 ---
 
+## 👨‍💻 Geliştirici
+
+**Erkan TURGUT**
+
+- **LinkedIn**: [@erkanturgut1205](https://www.linkedin.com/in/erkanturgut1205/)
+- **Portfolio**: [erkanturgut.netlify.app](https://erkanturgut.netlify.app/)
+- **GitHub**: [@Erkan3034](https://github.com/Erkan3034)
+
+---
+
 **Not**: Bu araç LeetCode, GitHub ve Google Gemini API'lerini kullanır. Bu servislerin kullanım şartlarına uygun olarak kullanın.
