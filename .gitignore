@@ -152,3 +152,10 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Build and distribution files (otomatik oluşur)
+build/
+dist/
+*.spec
+LeetCodeSyncTool_v1.0.zip
+

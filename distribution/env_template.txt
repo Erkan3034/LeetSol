@@ -1,0 +1,41 @@
+# Universal LeetCode GitHub Sync Tool - Environment Template
+# Bu dosyayı .env olarak kopyalayın ve kendi değerlerinizi girin
+
+# GitHub Ayarları
+# GitHub Personal Access Token (repo yetkisi olmalı)
+GITHUB_TOKEN=your_github_token_here
+
+# GitHub kullanıcı adınız
+GITHUB_USERNAME=your_github_username
+
+# Repository adı
+GITHUB_REPO=your_repository_name
+
+# LeetCode Ayarları
+# LeetCode session cookie değeri (F12 > Application > Cookies > LEETCODE_SESSION)
+LEETCODE_SESSION=your_leetcode_session_cookie
+
+# LeetCode CSRF token cookie değeri (F12 > Application > Cookies > csrftoken)
+CSRF_TOKEN=your_csrf_token_cookie
+
+# Gemini API Ayarları
+# Google Gemini API anahtarı (https://makersuite.google.com/app/apikey)
+GEMINI_API_KEY=your_gemini_api_key
+
+# Senkronizasyon Ayarları
+# Senkronizasyon sıklığı (5 dakika, 15 dakika, 30 dakika, 1 saat, 2 saat, 6 saat, 12 saat, 24 saat)
+SYNC_INTERVAL=30 dakika
+
+# Uygulama başladığında otomatik senkronizasyonu başlat (true/false)
+AUTO_START=true
+
+# Yeni çözüm bulunduğunda bildirim göster (true/false)
+NOTIFICATIONS=true
+
+# ÖNEMLİ NOTLAR:
+# 1. Bu dosyayı .env olarak kaydedin
+# 2. Tüm değerleri kendi bilgilerinizle değiştirin
+# 3. Bu dosyayı asla GitHub'a yüklemeyin (güvenlik riski)
+# 4. GitHub token'ınızda sadece 'repo' yetkisi olmalı
+# 5. LeetCode cookie'lerini F12 > Application > Cookies'den alabilirsiniz
+# 6. Gemini API anahtarını https://makersuite.google.com/app/apikey adresinden alabilirsiniz
