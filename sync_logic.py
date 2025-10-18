@@ -231,10 +231,13 @@ class SyncManager(QObject):
             self.status_changed.emit(f"Çözüm işleniyor: {problem_title}")
             
             # Çözüm kodunu çek
-            solution_code = self.leetcode_client.get_submission_code(submission_id)
-            if not solution_code:
+            submission_details = self.leetcode_client.get_submission_code(submission_id)
+            if not submission_details or not submission_details.get('code'):
                 self.error_occurred.emit(f"Çözüm kodu alınamadı: {problem_title}")
                 return
+            
+            solution_code = submission_details.get('code', '')
+            language = submission_details.get('language', language)  # Fallback to original lang if needed
             
             # Problem detaylarını çek
             problem_details = self.leetcode_client.get_problem_details(problem_slug)

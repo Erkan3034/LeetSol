@@ -113,15 +113,14 @@ class LeetCodeClient:
         query submissionDetails($submissionId: Int!) {
             submissionDetails(submissionId: $submissionId) {
                 code
-                lang
-                langName
+                lang {
+                    name
+                }
                 runtime
                 memory
-                statusDisplay
+                runtimeDisplay
+                memoryDisplay
                 timestamp
-                url
-                isPending
-                hasNotes
                 notes
                 flagType
                 question {
@@ -130,7 +129,6 @@ class LeetCodeClient:
                     titleSlug
                     hasFrontendPreview
                     exampleTestcases
-                    exampleExpected
                 }
             }
         }
@@ -146,7 +144,21 @@ class LeetCodeClient:
         if not submission_details:
             return None
         
-        return submission_details.get('code', '')
+        # Dil bilgisini düzgün şekilde al
+        lang_info = submission_details.get('lang', {})
+        language_name = lang_info.get('name', 'unknown') if lang_info else 'unknown'
+        
+        return {
+            'code': submission_details.get('code', ''),
+            'language': language_name,
+            'runtime': submission_details.get('runtime'),
+            'memory': submission_details.get('memory'),
+            'runtimeDisplay': submission_details.get('runtimeDisplay'),
+            'memoryDisplay': submission_details.get('memoryDisplay'),
+            'timestamp': submission_details.get('timestamp'),
+            'notes': submission_details.get('notes'),
+            'question': submission_details.get('question', {})
+        }
     
     def get_problem_details(self, problem_slug: str) -> Dict:
         """Problem detaylarını çek"""
