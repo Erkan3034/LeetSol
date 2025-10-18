@@ -13,6 +13,9 @@ import base64
 class ConfigWindow(QMainWindow):
     """Ana ayarlar penceresi"""
     
+    # Ayarlar kaydedildiğinde ana pencereye sinyal gönder
+    settings_saved = pyqtSignal()
+    
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Universal LeetCode GitHub Sync Tool")
@@ -330,6 +333,9 @@ NOTIFICATIONS={str(self.notifications.isChecked()).lower()}
             
             self.status_label.setText("Durum: Ayarlar başarıyla kaydedildi")
             QMessageBox.information(self, "Başarılı", "Ayarlar başarıyla kaydedildi!")
+            
+            # Ana pencereye ayarların kaydedildiğini bildir
+            self.settings_saved.emit()
             
         except Exception as e:
             QMessageBox.critical(self, "Hata", f"Ayarlar kaydedilirken hata oluştu: {str(e)}")

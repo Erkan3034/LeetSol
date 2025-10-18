@@ -304,7 +304,21 @@ class MainWindow(QMainWindow):
     def open_settings(self):
         """Ayarlar penceresini aç"""
         self.settings_window = ConfigWindow()
+        # Ayarlar kaydedildiğinde SyncManager'ı yeniden başlat
+        self.settings_window.settings_saved.connect(self.reload_sync_manager)
         self.settings_window.show()
+    
+    def reload_sync_manager(self):
+        """SyncManager'ı yeniden başlat"""
+        try:
+            self.sync_manager = SyncManager()
+            self.sync_manager.status_changed.connect(self.update_status)
+            self.sync_manager.new_solution_found.connect(self.show_new_solution_notification)
+            self.sync_manager.error_occurred.connect(self.show_error)
+            self.log_message("Ayarlar yüklendi ve SyncManager yeniden başlatıldı")
+        except Exception as e:
+            self.log_message(f"SyncManager yeniden başlatılamadı: {str(e)}")
+            self.sync_manager = None
     
     def toggle_sync(self):
         """Senkronizasyonu başlat/durdur"""
