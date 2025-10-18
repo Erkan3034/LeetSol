@@ -10,15 +10,15 @@ class GeminiClient:
         genai.configure(api_key=api_key)
         
         # Model ayarları
-        self.model = genai.GenerativeModel('gemini-1.5-flash-001')
+        self.model = genai.GenerativeModel('gemini-2.5-flash')
         
-        # Generation config
-        self.generation_config = {
-            'temperature': 0.7,
-            'top_p': 0.8,
-            'top_k': 40,
-            'max_output_tokens': 2048,
-        }
+            # Generation config
+            self.generation_config = {
+                'temperature': 0.3,  # Daha tutarlı sonuçlar için düşük
+                'top_p': 0.8,
+                'top_k': 40,
+                'max_output_tokens': 4096,  # Daha uzun README'ler için artırıldı
+            }
     
     def test_connection(self) -> bool:
         """Gemini API bağlantısını test et"""
@@ -56,28 +56,41 @@ class GeminiClient:
         """LeetCode çözümü için README.md içeriği oluştur"""
         
         try:
-            # Prompt template
+            # Daha detaylı ve profesyonel prompt
             prompt = f"""
-LeetCode problemi için detaylı bir README.md dosyası oluştur. Aşağıdaki bilgileri kullan:
+Sen bir yazılım mühendisi ve algoritma uzmanısın. LeetCode problemi için profesyonel bir README.md dosyası oluştur.
 
-**Problem Başlığı:** {problem_title}
-**Programlama Dili:** {language}
-**Problem Açıklaması:** {problem_description[:1000]}...
+**Problem Bilgileri:**
+- Başlık: {problem_title}
+- Programlama Dili: {language}
+- Problem Açıklaması: {problem_description[:1500]}
+
 **Çözüm Kodu:**
 ```{language}
 {solution_code}
 ```
 
-README.md dosyası şu bölümleri içermeli:
+**README.md dosyası şu bölümleri içermeli:**
 
 1. **Problem Başlığı** (H1 başlık)
-2. **Problem Açıklaması** (Kısa özet)
-3. **Çözüm Yaklaşımı** (Algoritma açıklaması)
-4. **Karmaşıklık Analizi** (Zaman ve uzay karmaşıklığı)
-5. **Kod Açıklaması** (Önemli kısımların açıklaması)
-6. **LeetCode Linki** (https://leetcode.com/problems/{problem_title.lower().replace(' ', '-')}/)
+2. **Problem Açıklaması** (Problem'in ne istediğini açık ve anlaşılır şekilde özetle)
+3. **Çözüm Yaklaşımı** (Hangi algoritma/veri yapısı kullanıldı, neden bu yaklaşım seçildi)
+4. **Algoritma Adımları** (Çözümün adım adım nasıl çalıştığı)
+5. **Karmaşıklık Analizi** (Zaman karmaşıklığı: O(?), Uzay karmaşıklığı: O(?))
+6. **Kod Açıklaması** (Kodun önemli kısımlarını açıkla)
+7. **Örnek Test Case** (Problem'in örnek girişi ve çıkışı)
+8. **LeetCode Linki** (https://leetcode.com/problems/{problem_title.lower().replace(' ', '-').replace('(', '').replace(')', '')}/)
 
-README.md formatında, Türkçe olarak ve profesyonel bir şekilde yaz. Markdown formatını kullan.
+**Önemli Notlar:**
+- Türkçe yaz
+- Markdown formatını kullan
+- Kod blokları için uygun syntax highlighting
+- Profesyonel ve akademik bir dil kullan
+- Çözümün mantığını net bir şekilde açıkla
+- Karmaşıklık analizini matematiksel gösterimle yap
+- Örneklerle destekle
+
+README.md formatında, tam ve detaylı bir şekilde yaz.
 """
             
             # Gemini'den yanıt al
@@ -109,13 +122,17 @@ README.md formatında, Türkçe olarak ve profesyonel bir şekilde yaz. Markdown
         # LeetCode linkini ekle (eğer yoksa)
         if 'leetcode.com' not in content.lower():
             slug = problem_title.lower().replace(' ', '-').replace('(', '').replace(')', '')
-            leetcode_link = f"\n\n## LeetCode Linki\n\n[Problem Linki](https://leetcode.com/problems/{slug}/)"
+            leetcode_link = f"\n\n## 🔗 LeetCode Linki\n\n[Problem Linki](https://leetcode.com/problems/{slug}/)"
             content += leetcode_link
         
-        # Programlama dili bilgisini ekle
-        if 'Programlama Dili' not in content:
-            language_section = f"\n\n## Programlama Dili\n\n{language}"
+        # Programlama dili bilgisini ekle (eğer yoksa)
+        if 'Programlama Dili' not in content and 'Language' not in content:
+            language_section = f"\n\n## 💻 Programlama Dili\n\n{language}"
             content += language_section
+        
+        # Otomatik oluşturuldu notunu ekle
+        if 'otomatik olarak oluşturulmuştur' not in content.lower():
+            content += f"\n\n---\n\n*Bu README dosyası Universal LeetCode GitHub Sync Tool tarafından otomatik olarak oluşturulmuştur.*"
         
         return content.strip()
     
@@ -126,25 +143,25 @@ README.md formatında, Türkçe olarak ve profesyonel bir şekilde yaz. Markdown
         
         return f"""# {problem_title}
 
-## Problem Açıklaması
+## 📝 Problem Açıklaması
 
-Bu LeetCode problemi için çözüm kodu aşağıda verilmiştir.
+Bu LeetCode problemi için çözüm kodu aşağıda verilmiştir. Detaylı açıklama için LeetCode linkini ziyaret edebilirsiniz.
 
-## Programlama Dili
+## 💻 Programlama Dili
 
 {language}
 
-## Çözüm
+## 🔧 Çözüm
 
 Çözüm kodu `solution.{self._get_file_extension(language)}` dosyasında bulunmaktadır.
 
-## LeetCode Linki
+## 🔗 LeetCode Linki
 
 [Problem Linki](https://leetcode.com/problems/{slug}/)
 
 ---
 
-*Bu README dosyası otomatik olarak oluşturulmuştur.*
+*Bu README dosyası Universal LeetCode GitHub Sync Tool tarafından otomatik olarak oluşturulmuştur.*
 """
     
     def _get_file_extension(self, language: str) -> str:
