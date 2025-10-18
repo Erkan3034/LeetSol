@@ -159,3 +159,10 @@ dist/
 *.spec
 LeetCodeSyncTool_v1.0.zip
 
+# Large files
+*.zip
+*.exe
+
+# Distribution folder (EXE dosyaları çok büyük)
+distribution/
+
