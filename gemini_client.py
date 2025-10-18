@@ -12,13 +12,13 @@ class GeminiClient:
         # Model ayarları
         self.model = genai.GenerativeModel('gemini-2.5-flash')
         
-            # Generation config
-            self.generation_config = {
-                'temperature': 0.3,  # Daha tutarlı sonuçlar için düşük
-                'top_p': 0.8,
-                'top_k': 40,
-                'max_output_tokens': 4096,  # Daha uzun README'ler için artırıldı
-            }
+        # Generation config
+        self.generation_config = {
+            'temperature': 0.3,  # Daha tutarlı sonuçlar için düşük
+            'top_p': 0.8,
+            'top_k': 40,
+            'max_output_tokens': 4096,  # Daha uzun README'ler için artırıldı
+        }
     
     def test_connection(self) -> bool:
         """Gemini API bağlantısını test et"""
