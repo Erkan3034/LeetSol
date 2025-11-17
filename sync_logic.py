@@ -44,7 +44,7 @@ class SyncManager(QObject):
         if not os.path.exists('.env'):
             raise FileNotFoundError(".env dosyası bulunamadı. Lütfen önce ayarları yapın.")
         
-        load_dotenv()
+        load_dotenv(override=True)
         
         # Şifreleme anahtarı yükle
         key_file = 'encryption.key'

@@ -244,7 +244,7 @@ class ConfigWindow(QMainWindow):
     def load_settings(self):
         """Kaydedilmiş ayarları yükle"""
         if os.path.exists('.env'):
-            load_dotenv()
+            load_dotenv(override=True)
             
             # GitHub ayarları
             self.github_token.setText(os.getenv('GITHUB_TOKEN', ''))
@@ -373,7 +373,7 @@ NOTIFICATIONS={str(self.notifications.isChecked()).lower()}
             
             # .env dosyasından şifrelenmiş verileri oku ve çöz
             from dotenv import load_dotenv
-            load_dotenv()
+            load_dotenv(override=True)
             
             try:
                 github_token = fernet.decrypt(os.getenv('GITHUB_TOKEN').encode()).decode()
